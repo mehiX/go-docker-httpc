@@ -17,6 +17,7 @@ func init() {
 	templates = make(map[string]*template.Template, 0)
 	templates["/images"] = template.Must(template.ParseFiles("./tmpl/images.html", "./tmpl/base.html"))
 	templates["/containers"] = template.Must(template.ParseFiles("./tmpl/containers.html", "./tmpl/base.html"))
+	templates["/login"] = template.Must(template.ParseFiles("tmpl/login.html", "tmpl/base.html"))
 
 }
 

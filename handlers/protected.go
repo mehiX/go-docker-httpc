@@ -17,3 +17,11 @@ func ProtectedHandler(next http.Handler) http.Handler {
 		}
 	})
 }
+
+func ShowLoginPage(w http.ResponseWriter, r *http.Request) {
+	templates["/login"].ExecuteTemplate(w, "base", nil)
+}
+
+func DoLogin(w http.ResponseWriter, r *http.Request) {
+
+}

@@ -1,0 +1,14 @@
+{{ define "head" }}
+<title>Login</title>
+{{ end }}
+
+{{ define "body" }}
+<h1>Login</h1>
+<form action="/login" method="post">
+    <label for="user">Username: </label>
+    <input type="text" name="user" id="user">
+    <label for="passwd"></label>
+    <input type="password" name="passwd" id="passwd">
+    <button type="submit">Login</button>
+</form>
+{{ end }}

@@ -20,6 +20,9 @@ func main() {
 	mainHandler := handlers.ProtectedHandler(stripPrefixHandler)
 
 	router.PathPrefix("/docker").Handler(mainHandler)
+	router.Path("/login").HandlerFunc(handlers.ShowLoginPage).Methods(http.MethodGet)
+	router.Path("/login").HandlerFunc(handlers.DoLogin).Methods(http.MethodPost)
+
 	n := negroni.Classic()
 
 	n.UseHandler(router)
