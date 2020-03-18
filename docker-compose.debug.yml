@@ -1,0 +1,10 @@
+version: '2.1'
+
+services:
+  docker-httpc:
+    image: docker-httpc:0.1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000

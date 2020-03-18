@@ -1,0 +1,10 @@
+version: '2.1'
+
+services:
+  docker-httpc:
+    image: docker-httpc:0.1
+    build: .
+    volumes: 
+    - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 3000:8080
