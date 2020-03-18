@@ -15,7 +15,11 @@ func main() {
 
 	router := mux.NewRouter()
 
-	router.PathPrefix("/docker").Handler(http.StripPrefix("/docker", handlers.DockerMiddleware()))
+	dockerHandler := handlers.DockerMiddleware()
+	stripPrefixHandler := http.StripPrefix("/docker", dockerHandler)
+	mainHandler := handlers.ProtectedHandler(stripPrefixHandler)
+
+	router.PathPrefix("/docker").Handler(mainHandler)
 	n := negroni.Classic()
 
 	n.UseHandler(router)
