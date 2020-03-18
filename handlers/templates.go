@@ -23,13 +23,19 @@ func init() {
 func handleServeTemplate(w http.ResponseWriter, r *http.Request) {
 	dockerResponse := gc.Get(r, "docker-response").(string)
 
+	dReader := strings.NewReader(dockerResponse)
+
 	if strings.Index(r.URL.Path, "/images/") == 0 {
 		var images []data.Image
-		json.NewDecoder(strings.NewReader(dockerResponse)).Decode(&images)
+		json.NewDecoder(dReader).Decode(&images)
 
 		log.Printf("%#v\n", images)
 
 		templates["/images"].ExecuteTemplate(w, "base", images)
+	} else if 0 == strings.Index(r.URL.Path, "/containers/") {
+		var containers []data.Container
+		json.NewDecoder(dReader).Decode(&containers)
+		templates["/containers"].ExecuteTemplate(w, "base", containers)
 	} else {
 		http.Error(w, "Operation not supported", http.StatusBadRequest)
 	}

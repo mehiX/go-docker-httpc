@@ -1,8 +1,16 @@
-{{ define "/containers/json" }}
-<html>
-    <head></head>
-    <body>
-        <h1>Containers</h1>
-    </body>
-</html>
+{{ define "head" }}
+    <title>Containers</title>
+{{ end }}
+
+{{ define "body" }}
+    <h1>Containers</h1>
+    <div>
+        {{ range . }}
+        <div>
+            {{ range .Names }}
+            <div>{{ . }}</div>
+            {{ end }}
+        </div>
+        {{ end }}
+    </div>
 {{ end }}
