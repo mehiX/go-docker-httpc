@@ -1,12 +1,12 @@
 package main
 
 import (
-	"DockerHttpClient/handlers"
 	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/mehix/go-docker-httpc/handlers"
 	"github.com/urfave/negroni"
 )
 

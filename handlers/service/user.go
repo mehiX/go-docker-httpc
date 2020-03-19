@@ -1,8 +1,9 @@
 package service
 
 import (
-	"DockerHttpClient/data"
 	"errors"
+
+	"github.com/mehix/go-docker-httpc/data"
 )
 
 type user struct {

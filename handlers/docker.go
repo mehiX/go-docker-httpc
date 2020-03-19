@@ -1,11 +1,11 @@
 package handlers
 
 import (
-	"DockerHttpClient/client"
 	"log"
 	"net/http"
 
 	gc "github.com/gorilla/context"
+	"github.com/mehix/go-docker-httpc/client"
 )
 
 // DockerMiddleware handles incoming requests and routes them to the docker daemon

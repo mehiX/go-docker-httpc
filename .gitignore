@@ -1,5 +1,6 @@
 # generated executable
 DockerHttpClient
+go-docker-httpc
 
 # directory where the keys are generated
 keys/

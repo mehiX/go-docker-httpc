@@ -1,11 +1,55 @@
 package handlers
 
 import (
-	"DockerHttpClient/handlers/service"
+	"crypto/rsa"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/dgrijalva/jwt-go"
+	"github.com/mehix/go-docker-httpc/handlers/service"
 )
+
+var (
+	signingKey   *rsa.PrivateKey
+	verifyingKey *rsa.PublicKey
+)
+
+func init() {
+
+	var err error
+
+	signingKey, err = getPk("keys/app.rsa")
+	if nil != err {
+		log.Panicf("Private key error; %v", err)
+	}
+
+	verifyingKey, err = getPubKey("keys/app.rsa.pub")
+	if nil != err {
+		log.Panicf("Public key error: %v", err)
+	}
+}
+
+func getPk(path string) (*rsa.PrivateKey, error) {
+	key, err := ioutil.ReadFile(path)
+
+	if nil != err {
+		return nil, err
+	}
+
+	return jwt.ParseRSAPrivateKeyFromPEM(key)
+}
+
+func getPubKey(path string) (*rsa.PublicKey, error) {
+	key, err := ioutil.ReadFile(path)
+
+	if nil != err {
+		return nil, err
+	}
+
+	return jwt.ParseRSAPublicKeyFromPEM(key)
+}
 
 // ProtectedHandler makes sure the user is authorized for this resource
 func ProtectedHandler(next http.Handler) http.Handler {

@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"DockerHttpClient/data"
 	"encoding/json"
 	"html/template"
 	"log"
@@ -9,6 +8,7 @@ import (
 	"strings"
 
 	gc "github.com/gorilla/context"
+	"github.com/mehix/go-docker-httpc/data"
 )
 
 var templates map[string]*template.Template
