@@ -1,1 +1,5 @@
+# generated executable
 DockerHttpClient
+
+# directory where the keys are generated
+keys/
