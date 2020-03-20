@@ -30,6 +30,8 @@ func getDockerResponse(r *http.Request) string {
 	return ""
 }
 
+// HandleServeTemplate fetch the docker engine response from the context
+// and show the appropriate template based on the base URL
 func HandleServeTemplate(w http.ResponseWriter, r *http.Request) {
 	dockerResponse := getDockerResponse(r)
 
@@ -56,8 +58,4 @@ func HandleServeTemplate(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Operation not supported for: "+path, http.StatusBadRequest)
 	}
 
-}
-
-func handleHomeTemplate(w http.ResponseWriter, r *http.Request) {
-	templates["/home"].ExecuteTemplate(w, "base", nil)
 }
