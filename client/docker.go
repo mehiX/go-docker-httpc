@@ -3,12 +3,16 @@ package client
 import (
 	"context"
 	"io/ioutil"
+	"log"
 	"net"
 	"net/http"
 )
 
-// DockerHttp Sends a request to the docker daemon and returns the response
-func DockerHttp(q string, method string) (string, error) {
+// DockerHTTP Sends a request to the docker daemon and returns the response
+func DockerHTTP(q string, method string) (string, error) {
+
+	log.Printf("Docker -> query: %s, method: %s", q, method)
+
 	client := http.Client{
 		Transport: &http.Transport{
 			DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {

@@ -12,6 +12,7 @@ FROM alpine:latest
 RUN apk --no-cache add ca-certificates
 COPY --from=builder /go/bin/go-docker-httpc /app
 COPY tmpl ./tmpl/
+COPY keys ./keys/
 ENTRYPOINT ./app
 LABEL Name=go-docker-httpc Version=0.0.1
 EXPOSE 8080

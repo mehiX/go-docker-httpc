@@ -2,12 +2,13 @@ package handlers
 
 import (
 	"crypto/rsa"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/gorilla/context"
+	"github.com/mehix/go-docker-httpc/data"
 	"github.com/mehix/go-docker-httpc/handlers/service"
 )
 
@@ -52,17 +53,21 @@ func getPubKey(path string) (*rsa.PublicKey, error) {
 }
 
 // ProtectedHandler makes sure the user is authorized for this resource
-func ProtectedHandler(next http.Handler) http.Handler {
+func ProtectedHandler(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Println("Checking protected")
-		if "" != r.URL.Query().Get("user") {
-			next.ServeHTTP(w, r)
-		} else {
-			nextURL := fmt.Sprintf("/login?next=%s", r.URL.Path)
-			http.Redirect(w, r, nextURL, http.StatusFound)
-		}
-	})
+	key := r.URL.Query().Get("key")
+	_, err := (&service.Token{}).FindByKey(key)
+
+	if nil != err {
+		log.Println("NOT Found token!!")
+		http.Redirect(w, r, "/login", http.StatusFound)
+		return
+	}
+
+	log.Println("Found token!!")
+	context.Set(r, "tokenKey", key)
+	next.ServeHTTP(w, r)
+
 }
 
 // ShowLoginPage display the login form
@@ -76,13 +81,34 @@ func DoLogin(w http.ResponseWriter, r *http.Request) {
 
 	username := r.FormValue("user")
 	passwd := r.FormValue("passwd")
-	next := r.URL.Query().Get("next")
 
 	user, err := service.Login(username, passwd)
 
 	if nil != err {
-		http.Redirect(w, r, "/login?next="+next, http.StatusFound)
+		// login error
+		w.Header().Set("Content-Type", "text/html")
+		http.Redirect(w, r, "/login", http.StatusFound)
 	} else {
-		http.Redirect(w, r, next+"?user="+user.Username, http.StatusFound)
+		claims := data.UserClaims{
+			Username: user.Username,
+			Role:     user.Role,
+			StandardClaims: jwt.StandardClaims{
+				ExpiresAt: 15000,
+				Issuer:    "go-docker-httpc",
+			},
+		}
+
+		token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
+		ss, err := token.SignedString(signingKey)
+
+		if nil != err {
+			log.Printf("Signing error: %v\n", err)
+		} else {
+			log.Printf("Signed token: %s\n", ss)
+		}
+
+		tokenObj := service.NewStoredToken(ss).Store()
+
+		templates["/home"].ExecuteTemplate(w, "base", tokenObj)
 	}
 }

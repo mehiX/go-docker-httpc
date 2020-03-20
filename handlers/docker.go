@@ -8,24 +8,14 @@ import (
 	"github.com/mehix/go-docker-httpc/client"
 )
 
-// DockerMiddleware handles incoming requests and routes them to the docker daemon
-func DockerMiddleware() http.Handler {
-	return dockerHandler(http.HandlerFunc(handleServeTemplate))
-}
+func HandleDocker(w http.ResponseWriter, r *http.Request) {
 
-func dockerHandler(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		handleDocker(w, r)
-		next.ServeHTTP(w, r)
-	})
-}
-
-func handleDocker(w http.ResponseWriter, r *http.Request) {
+	log.Println("In HandleDocker")
 
 	q := r.URL.Path
 	method := r.Method
 
-	dockerResp, err := client.DockerHttp(q, method)
+	dockerResp, err := client.DockerHTTP(q, method)
 
 	if nil != err {
 		log.Println(err)

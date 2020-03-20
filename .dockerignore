@@ -8,3 +8,6 @@
 !client
 !data
 !handlers
+
+#keys folder
+!keys/
