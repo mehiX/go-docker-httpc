@@ -1,8 +1,16 @@
 {{ define "base" }}
 <html>
-    <head>{{ template "head" }}</head>
-    <body>
+
+<head>{{ template "head" }}</head>
+
+<body>
+    <div>
+        {{ template "menu" .Key }}
+    </div>
+    <div>
         {{ template "body" . }}
-    </body>
+    </div>
+</body>
+
 </html>
 {{ end }}

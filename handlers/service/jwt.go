@@ -2,8 +2,8 @@ package service
 
 import (
 	"errors"
-	"strconv"
-	"time"
+
+	"github.com/google/uuid"
 )
 
 var storage = make(map[string]*Token)
@@ -25,7 +25,7 @@ func NewStoredToken(token string) *Token {
 }
 
 func (t *Token) Store() *Token {
-	t.Key = strconv.FormatInt(time.Now().Unix(), 10)
+	t.Key = uuid.New().String()
 
 	storage[t.Key] = t
 

@@ -10,3 +10,9 @@ type UserClaims struct {
 	Role     string `json:"role"`
 	jwt.StandardClaims
 }
+
+// TemplateData return the token key and the actual data to execute the template with
+type TemplateData struct {
+	Key  string
+	Data interface{}
+}

@@ -22,6 +22,7 @@ func main() {
 
 	dockerRouter := mux.NewRouter().PathPrefix("/docker").Subrouter().StrictSlash(true)
 	dockerRouter.PathPrefix("/images").Handler(handlerStripPrefixDocker)
+	dockerRouter.PathPrefix("/containers").Handler(handlerStripPrefixDocker)
 
 	router.PathPrefix("/docker").Handler(negroni.New(
 		negroni.HandlerFunc(handlers.ProtectedHandler),
@@ -31,6 +32,7 @@ func main() {
 	router.Path("/login").HandlerFunc(handlers.DoLogin).Methods(http.MethodPost)
 	router.Path("/home").Handler(negroni.New(
 		negroni.HandlerFunc(handlers.ProtectedHandler),
+		negroni.WrapFunc(handlers.HandleServeTemplate),
 	)).Methods(http.MethodGet)
 
 	n := negroni.Classic()

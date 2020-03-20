@@ -2,9 +2,11 @@
 <title>Home</title>
 {{ end }}
 
+{{ define "menu" }}
+{{ end }}
+
 {{ define "body" }}
 <h2>Menu</h2>
-<p>All: {{ . }}</p>
 <p><a href="/docker/images/json?key={{ .Key }}">Images</a></p>
 <p><a href="/docker/containers/json?key={{ .Key }}">Containers</a></p>
 {{ end }}
