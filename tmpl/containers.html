@@ -5,7 +5,7 @@
 {{ define "body" }}
     <h1>Containers</h1>
     <div>
-        {{ range .Data }}
+        {{ range . }}
         <div>
             {{ range .Names }}
             <div>{{ . }}</div>

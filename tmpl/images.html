@@ -6,10 +6,9 @@
 <!--
     "Containers":-1,"Created":1583847056,"Id":"sha256:8de60892e392347a6fd02efea0cd583200036c779f4ef270c1a3e94565665c56","Labels":{"maintainer":"Rapid7"},"ParentId":"","RepoDigests":["metasploitframework/metasploit-framework@sha256:f7078b84943c856f063e471a4f4900f0622d2ce542dc609d6114e01065c15fcd"],"RepoTags":["metasploitframework/metasploit-framework:latest"],"SharedSize":-1,"Size":800349437,"VirtualSize":800349437}
 -->
-{{ $key := .Key }}
     <h1>Images</h1>
     <hr>
-    {{ range .Data }}
+    {{ range . }}
     <div>
         <p>ID: {{ .ID }}</p>
         <p>Labels:

@@ -4,10 +4,17 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
+	"sync"
 
 	"github.com/gorilla/mux"
 	"github.com/mehix/go-docker-httpc/handlers"
 	"github.com/urfave/negroni"
+)
+
+var (
+	addrSecure    = ":8443"
+	addrNotSecure = ":8080"
 )
 
 func main() {
@@ -39,11 +46,39 @@ func main() {
 
 	n.UseHandler(router)
 
-	server := &http.Server{
+	serverTLS := &http.Server{
 		Handler: n,
-		Addr:    ":8443",
+		Addr:    addrSecure,
 	}
 
-	log.Fatal(server.ListenAndServeTLS("./certs/certificate.pem", "./certs/key.pem"))
+	server := &http.Server{
+		Handler: http.HandlerFunc(redirectNonSecure),
+		Addr:    addrNotSecure,
+	}
 
+	var wg sync.WaitGroup
+
+	wg.Add(1)
+	go func() {
+		log.Println("Listen TLS ", serverTLS.Addr)
+		log.Fatal(serverTLS.ListenAndServeTLS("./certs/certificate.pem", "./certs/key.pem"))
+		wg.Done()
+	}()
+
+	wg.Add(1)
+	go func() {
+		log.Println("Listen non TLS ", server.Addr)
+		log.Fatal(server.ListenAndServe())
+		wg.Done()
+	}()
+
+	wg.Wait()
+
+}
+
+func redirectNonSecure(w http.ResponseWriter, r *http.Request) {
+	serverName := strings.SplitN(r.Host, ":", 2)[0]
+	redirectURL := "https://" + serverName + addrSecure + r.RequestURI
+
+	http.Redirect(w, r, redirectURL, http.StatusMovedPermanently)
 }

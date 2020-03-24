@@ -5,9 +5,10 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/gorilla/context"
+	"github.com/gorilla/sessions"
 	"github.com/mehix/go-docker-httpc/data"
 	"github.com/mehix/go-docker-httpc/handlers/service"
 )
@@ -15,6 +16,10 @@ import (
 var (
 	signingKey   *rsa.PrivateKey
 	verifyingKey *rsa.PublicKey
+
+	// TODO change this: https://github.com/gorilla/sessions
+	cookieStore = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
+	sessionName = "jwt-auth"
 )
 
 func init() {
@@ -30,6 +35,9 @@ func init() {
 	if nil != err {
 		log.Panicf("Public key error: %v", err)
 	}
+
+	cookieStore.Options.Secure = true
+	cookieStore.Options.HttpOnly = true
 }
 
 func getPk(path string) (*rsa.PrivateKey, error) {
@@ -55,17 +63,25 @@ func getPubKey(path string) (*rsa.PublicKey, error) {
 // ProtectedHandler makes sure the user is authorized for this resource
 func ProtectedHandler(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 
-	key := r.URL.Query().Get("key")
+	//key := r.URL.Query().Get("key")
+	session, _ := cookieStore.Get(r, sessionName)
+
+	var key string
+	if k, ok := session.Values["key"]; ok {
+		key = k.(string)
+	} else {
+		key = ""
+	}
+
 	_, err := (&service.Token{}).FindByKey(key)
 
 	if nil != err {
-		log.Println("NOT Found token!!")
+		log.Println("NOT Found token!! Key is: ", key)
+		log.Println(err)
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
 
-	log.Println("Found token!!")
-	context.Set(r, "tokenKey", key)
 	next.ServeHTTP(w, r)
 
 }
@@ -109,6 +125,14 @@ func DoLogin(w http.ResponseWriter, r *http.Request) {
 
 		tokenObj := service.NewStoredToken(ss).Store()
 
-		templates["/home"].ExecuteTemplate(w, "base", tokenObj)
+		session, _ := cookieStore.Get(r, sessionName)
+		session.Values["key"] = tokenObj.Key
+		if err := session.Save(r, w); nil != err {
+			log.Println(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		templates["/home"].ExecuteTemplate(w, "base", nil)
 	}
 }

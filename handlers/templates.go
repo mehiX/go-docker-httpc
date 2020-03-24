@@ -42,22 +42,18 @@ func HandleServeTemplate(w http.ResponseWriter, r *http.Request) {
 	dReader := strings.NewReader(dockerResponse)
 
 	path := r.URL.Path
-	key := r.URL.Query().Get("key")
-	td := data.TemplateData{Key: key}
 
 	if strings.Index(path, "/images/") == 0 {
 		var images []data.Image
 		json.NewDecoder(dReader).Decode(&images)
 
-		td.Data = images
-		templates["/images"].ExecuteTemplate(w, "base", td)
+		templates["/images"].ExecuteTemplate(w, "base", images)
 	} else if 0 == strings.Index(path, "/containers/") {
 		var containers []data.Container
 		json.NewDecoder(dReader).Decode(&containers)
-		td.Data = containers
-		templates["/containers"].ExecuteTemplate(w, "base", td)
+		templates["/containers"].ExecuteTemplate(w, "base", containers)
 	} else if 0 == strings.Index(path, "/home") {
-		templates["/home"].ExecuteTemplate(w, "base", td)
+		templates["/home"].ExecuteTemplate(w, "base", nil)
 	} else {
 		http.Error(w, "Operation not supported for: "+path, http.StatusBadRequest)
 	}

@@ -11,8 +11,6 @@ import (
 // HandleDocker makes a request to the docker engine and save the response in the context
 func HandleDocker(w http.ResponseWriter, r *http.Request) {
 
-	log.Println("In HandleDocker")
-
 	q := r.URL.Path
 	method := r.Method
 
