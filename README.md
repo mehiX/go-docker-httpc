@@ -2,6 +2,20 @@
 
 A web interface for the [Docker engine api](https://docs.docker.com/engine/api/v1.30/)
 
+## Start
+
+Create the JWT signing keys:
+
+```bash
+./keys.sh
+```
+
+Create a folder `/certs` and place your SSL certificates or create self-signed certificates (this creates the folder as well):
+
+```bash
+./certs.sh
+```
+
 
 ## TODO
 - JWT

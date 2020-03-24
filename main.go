@@ -41,18 +41,9 @@ func main() {
 
 	server := &http.Server{
 		Handler: n,
-		Addr:    ":8080",
+		Addr:    ":8443",
 	}
 
-	log.Fatal(server.ListenAndServe())
+	log.Fatal(server.ListenAndServeTLS("./certs/certificate.pem", "./certs/key.pem"))
 
-	// listen on the /docker path
-
-	// remove the /docker prefix
-
-	// send the reminder of the path to the docker daemon
-
-	// create templates based on the remaining URL
-
-	// serve the tempolates
 }
